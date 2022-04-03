@@ -1040,6 +1040,7 @@ void motorTest() {
   
       Serial.println(stepCount);
       Serial.println(cycleCount);
+      
       keyIn = customKeypad.getKey();
       if(keyIn == '#') break;
     }
