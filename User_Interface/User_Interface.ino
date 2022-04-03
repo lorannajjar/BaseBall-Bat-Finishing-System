@@ -1030,7 +1030,6 @@ void motorTest() {
   unsigned long endTime = 0;
   while(keyIn != '#') {
     start = micros();
-    digitalWrite(sig, HIGH);
     for (; i <= stepsIndex; i++)
     {
       StepForward(delay_time);
@@ -1044,7 +1043,6 @@ void motorTest() {
       keyIn = customKeypad.getKey();
       if(keyIn == '#') break;
     }
-    digitalWrite(sig, LOW);
     endTime = micros() - start;
 
     Serial.println(endTime);
