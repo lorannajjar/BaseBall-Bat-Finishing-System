@@ -408,7 +408,7 @@ void operations(){
     switch(opKey){
       case '1':
       StepForward(delay_time);
-      StepForward180(delay_time, 0);
+      StepForward180(delay_time);
       tft.fillScreen(ILI9341_NAVY);
       tft.setCursor(5,0);
       tft.setTextColor(ILI9341_WHITE);  tft.setTextSize(3);
@@ -419,14 +419,6 @@ void operations(){
       tft.print("Bat Length: "); tft.println(batLength);
       tft.print("Bat Circumference: "); tft.println(batCircum);
       tft.print("Wood Type: "); tft.println(woodType);
-      tft.println(" ");
-      tft.println(" ");
-      tft.setTextColor(ILI9341_RED);
-      tft.println("Press '3' to STOP");
-      while (opKey == '1') {
-        opKey = customKeypad.getKey();
-      }
-      //stop motor
       break;
       default:
       break;
@@ -758,7 +750,7 @@ void testModeLoop(char input) {
 void StepForward(int delay_time)
 {
   //int m1 = 5, m2 = 4, m3 = 50;
-  printInfo(rpm, angleIndex, cycleCount, 1, 0, 0);
+  //printInfo(rpm, angleIndex, cycleCount, 1, 0, 0);
   digitalWrite(DIR1, LOW);
   for (int i = 0; i < 1; i++)
   {
@@ -772,19 +764,21 @@ void StepForward(int delay_time)
     }
     delay(delay_time);
   }
-  printInfo(rpm, angleIndex, cycleCount, 0, 0, 0);
+  //printInfo(rpm, angleIndex, cycleCount, 0, 0, 0);
   //printInfo(delay_time, angleIndex, cycleCount, 0, 0, 0);
   //printInfo(delay_time, m2, m3, 0, 0, 0);
 }
 
 //delay_time for stepper motor speed
 //solenoidMode '0' to disable or '1' to enable solenoid
-void StepForward180(int delay_time, int solenoidMode)
+void StepForward180(int delay_time)
 {
   //these can be passed different values
   int m1 = 5, m2 = 4, m3 = 50;
   //printInfo(m1, m2, m3, 0, 1, 1);
-  
+
+  //printInfo(rpm, angleIndex, cycleCount, 0, 1, 1);
+  /*
   if(solenoidMode) {
     printInfo(rpm, angleIndex, cycleCount, 0, 1, 1);
     //printInfo(delay_time, angleIndex, cycleCount, 0, 1, 1);
@@ -795,6 +789,7 @@ void StepForward180(int delay_time, int solenoidMode)
     //printInfo(delay_time, angleIndex, cycleCount, 0, 1, 0);
     //printInfo(delay_time, m2, m3, 0, 1, 0);
   }
+  */
   
   digitalWrite(DIR2, LOW);
   for (int i = 0; i < 1; i++)
@@ -821,10 +816,10 @@ void StepForward180(int delay_time, int solenoidMode)
     }
     delay(delay_time);
   }
-  if(solenoidMode) {
-    digitalWrite(sig, LOW);
-  }
-  printInfo(rpm, angleIndex, cycleCount, 0, 0, 0);
+//  if(solenoidMode) {
+//    digitalWrite(sig, LOW);
+//  }
+  //printInfo(rpm, angleIndex, cycleCount, 0, 0, 0);
   //printInfo(delay_time, angleIndex, cycleCount, 0, 0, 0);
   //printInfo(delay_time, m2, m3, 0, 0, 0);
 }
@@ -952,17 +947,20 @@ void AllTest() {
   //this need to be looked at
   //sometimes it does NOT exit when # is pressed
   //cycleCount = 0;
-  
+  printInfo(rpm, angleIndex, cycleCount, 0, 0, 1);
   int i = 1;
   unsigned long start = 0;
   unsigned long endTime = 0;
   while(keyIn != '#') {
     start = micros();
     digitalWrite(sig, HIGH);
+    //printInfo(rpm, angleIndex, cycleCount, 0, 0, 1);
     for (; i <= stepsIndex; i++)
     {
+      printInfo(rpm, angleIndex, cycleCount, 1, 0, 1);
       StepForward(delay_time);
-      StepForward180(delay_time, 1);
+      printInfo(rpm, angleIndex, cycleCount, 0, 1, 1);
+      StepForward180(delay_time);
       
       stepCount += 1;
       cycleCount += 1;
@@ -1032,8 +1030,10 @@ void motorTest() {
     start = micros();
     for (; i <= stepsIndex; i++)
     {
+      printInfo(rpm, angleIndex, cycleCount, 1, 0, 0);
       StepForward(delay_time);
-      StepForward180(delay_time, 0);
+      printInfo(rpm, angleIndex, cycleCount, 0, 1, 0);
+      StepForward180(delay_time);
       
       stepCount += 1;
       cycleCount += 1;
@@ -1042,6 +1042,7 @@ void motorTest() {
       Serial.println(cycleCount);
       
       keyIn = customKeypad.getKey();
+      delay(10);
       if(keyIn == '#') break;
     }
     endTime = micros() - start;
