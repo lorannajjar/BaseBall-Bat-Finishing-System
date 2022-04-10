@@ -236,7 +236,6 @@ void setup() {
   LCD_Init();
 
   welcome();
-  //mainMenu();
 }
 
 void loop(void) {
@@ -542,21 +541,20 @@ void developerModeLoop(char input) {
   if (input){
   switch (input) {
   case '1': // bat length
-    //add function to change bat length
+    changeValues(batLength, 1, 24, 34, "Bat Length");
     break;
   case '2': // bat circumference
-    //add function to change bat circumference
+    changeValuesCircum(batCircum, 0.1, 4, 8.6, "Bat Circumference");
     break;
   case '3': // wood type
-    //add function to change wood type
     //maybe #define type0 0, at the top
     //type: 0, 1, 2
     //int woodType = 0, 1, 2
+    changeValues(woodType, 1, 0, 2, "Wood Type");
     break;
   case '4': // travel speed
     //function under test
     //travelSpeed();
-    //changeValues(int &input, int changeBy, int minValue, int maxValue, char *textName);
     changeValues(rpm, 10, 10, 500, "RPM SPEED");
     Serial.println(rpm);
     delay_time = 60L * 1000L * 1000L / stepsPerRev / rpm;
@@ -617,6 +615,35 @@ void changeValues(int &input, int changeBy, int minValue, int maxValue, char *te
       tft.print(input);tft.print("  ");
     }
 
+void changeValuesCircum(float &input, float changeBy, float minValue, float maxValue, char *textName) {
+  int temSpeed = -1;
+  
+  tft.fillScreen(ILI9341_BLACK);
+  tft.setCursor(10, 10);
+  tft.setTextColor(ILI9341_BLUE);  tft.setTextSize(3.5);
+  tft.println(textName);
+  tft.println(" ");
+  tft.setTextColor(ILI9341_BLUE);  tft.setTextSize(2);
+  tft.println("press # to exit");
+  tft.println("press 1 to Increment");
+  tft.println("press 3 to Decrement");
+  tft.setCursor(14, 158);
+  tft.setTextColor(ILI9341_RED);  tft.setTextSize(2);
+  tft.print(textName);tft.print(":  "); 
+  tft.setTextColor(ILI9341_RED, ILI9341_BLACK);
+  tft.print(input);
+
+  char keyIn = 's';
+  while(keyIn != '#') {
+    //display updated value everytime we increase/decrease speed
+    if(temSpeed != input) {
+      temSpeed = input;
+      tft.setCursor(14, 158);
+      tft.print(textName);tft.print(":  "); 
+      tft.setTextColor(ILI9341_RED, ILI9341_BLACK);
+      tft.print(input);tft.print("  ");
+    }
+
     //if 1 speed - changeBy
     if(keyIn == '1') {
       if(input > minValue) {
@@ -635,13 +662,11 @@ void changeValues(int &input, int changeBy, int minValue, int maxValue, char *te
 }
 
 /*
-
 //use this function to be able to change
 //the value of delay_time (motor speed) as example
 void travelSpeed() {
   int temSpeed = -1;
   int upDownValue = 50;
-
   
   tft.fillScreen(ILI9341_BLACK);
   tft.setCursor(10, 10);
@@ -657,7 +682,6 @@ void travelSpeed() {
   tft.setCursor(14, 158);
   tft.setTextColor(ILI9341_RED);  tft.setTextSize(2);
   tft.print("Travel Speed: "); tft.println(delay_time);
-
   char keyIn = 's';
   while(keyIn != '#') {
     //display updated value everytime we increase/decrease speed
@@ -669,7 +693,6 @@ void travelSpeed() {
       tft.setTextColor(ILI9341_RED);  tft.setTextSize(2);
       tft.print("Travel Speed: "); tft.println(delay_time);
     }
-
     //if 1 speed - upDownValue(50)
     if(keyIn == '1') {
       if(delay_time > 50) {
