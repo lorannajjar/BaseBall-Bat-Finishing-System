@@ -614,6 +614,22 @@ void changeValues(int &input, int changeBy, int minValue, int maxValue, char *te
       tft.setTextColor(ILI9341_RED, ILI9341_BLACK);
       tft.print(input);tft.print("  ");
     }
+    //if 1 speed - changeBy
+    if(keyIn == '1') {
+      if(input > minValue) {
+        input -= changeBy;
+      }
+    } 
+    //if 2 speed + changeBy
+    else if(keyIn == '3') {
+      if(input < maxValue) {
+        input += changeBy;
+      }
+    }
+    delay(30);
+    keyIn = customKeypad.getKey();
+  }
+}
 
 void changeValuesCircum(float &input, float changeBy, float minValue, float maxValue, char *textName) {
   int temSpeed = -1;
