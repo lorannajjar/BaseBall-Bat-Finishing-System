@@ -10,25 +10,25 @@
 int devModeEn = 0;
 
 //Stepper motors variables/setup
-int CLOCK1 = 7, DIR1 = 6, CLOCK2 = 5, DIR2 = 4;
+int CLOCK1 = 11, DIR1 = 10, CLOCK2 = 13, DIR2 = 12;
 
 int stepCount = 1;
 int cycleCount = 1;
 int stepsPerRev = 2000;
 
-int angleIndex = 15;
-int stepsIndex = 360/angleIndex;
+float angleIndex = 15;
+float stepsIndex = 360/angleIndex;
 
-int anglePoly = 2;
-int stepsPoly = stepsPerRev/anglePoly;
+float anglePoly = 2;
+float stepsPoly = stepsPerRev/anglePoly;
 
-int rpm = 500;
+float rpm = 150;
 
 float delay_time = 60L * 1000L * 1000L / stepsPerRev / rpm;
 
-int batLength = 24;
+float batLength = 24;
 float batCircum = 8.2;
-int woodType = 0;
+float woodType = 0;
 
 //Solenoid setup
 int sig = 8;
@@ -51,15 +51,17 @@ char hexaKeys[ROWS][COLS] = {
 };
 */
 
-byte rowPins[ROWS] = {31, 33, 35, 37}; //connect to the row pinouts of the keypad
-byte colPins[COLS] = {39, 41, 43, 45}; //connect to the column pinouts of the keypad
+//byte rowPins[ROWS] = {31, 33, 35, 37}; //connect to the row pinouts of the keypad
+//byte colPins[COLS] = {39, 41, 43, 45}; //connect to the column pinouts of the keypad
+byte rowPins[ROWS] = {3, 2, 1, 0}; //connect to the row pinouts of the keypad
+byte colPins[COLS] = {7, 6, 5, 4}; //connect to the column pinouts of the keypad
 
 //initialize an instance of class NewKeypad
 Keypad customKeypad = Keypad( makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS); 
 
 // For the Adafruit shield, these are the default.
-#define TFT_DC 9
-#define TFT_CS 10
+#define TFT_DC 8
+#define TFT_CS 9
 
 // Use hardware SPI (on Uno, #13, #12, #11) and the above for CS/DC
 Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
@@ -522,7 +524,8 @@ void developerModeMenu() {
   tft.println(" 3. Wood Type");
   tft.println(" 4. Travel Speed");
   tft.println(" 5. Rotation Angle");
-  tft.println(" 6. Force");
+  tft.println(" 6. Poly Angle");
+  tft.println(" 7. Force");
   tft.println(" #. Main Menu");
 
   while (developerModeKey == NULL)
@@ -567,7 +570,13 @@ void developerModeLoop(char input) {
     stepsIndex = 360/angleIndex;
     //delay_time = 60L * 1000L * 1000L / stepsPerRev / rpm;
     break;
-  case '6': // force
+  case '6': // poly angle
+    //add function to change poly angle
+    changeValues(anglePoly, 0.1, 0.1, 4, "poly angle");
+    stepsPoly = stepsPerRev/anglePoly;
+    //delay_time = 60L * 1000L * 1000L / stepsPerRev / rpm;
+    break;
+  case '7': // force
     //add function to change force option
     break;
   case '#': // return to main Menu
@@ -586,7 +595,7 @@ void developerModeLoop(char input) {
 }
 
 //use this function to change "input" to increment it or/and decrement it by "changeBy"
-void changeValues(int &input, int changeBy, int minValue, int maxValue, char *textName) {
+void changeValues(float &input, float changeBy, float minValue, float maxValue, char *textName) {
   int temSpeed = -1;
   
   tft.fillScreen(ILI9341_BLACK);
@@ -614,6 +623,8 @@ void changeValues(int &input, int changeBy, int minValue, int maxValue, char *te
       tft.setTextColor(ILI9341_RED, ILI9341_BLACK);
       tft.print(input);tft.print("  ");
     }
+  }
+}
 
 void changeValuesCircum(float &input, float changeBy, float minValue, float maxValue, char *textName) {
   int temSpeed = -1;
