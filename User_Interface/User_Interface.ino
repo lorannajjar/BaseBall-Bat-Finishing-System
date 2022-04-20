@@ -757,8 +757,8 @@ void testModeLoop(char input) {
 void StepForward()
 {
   digitalWrite(DIR1, LOW);
-  for (int i = 0; i < 1; i++)
-  {
+//  for (int i = 0; i < 1; i++)
+//  {
     for (int x = 0; x < stepsPerRev / stepsIndex; x++)
     {
       digitalWrite(CLOCK1, HIGH);
@@ -768,7 +768,7 @@ void StepForward()
       stepCount+1;
     }
     delay(delay_time);
-  }
+//  }
 }
 
 //delay_time for stepper motor speed
@@ -801,6 +801,18 @@ void StepForward180()
   delay(delay_time);
 }
 
+void calibrate()
+{
+  digitalWrite(DIR2, LOW);
+  while(digitalRead(HALL_SENSOR) == HIGH)
+  {
+    digitalWrite(CLOCK2, HIGH);
+    delayMicroseconds(1500);
+    digitalWrite(CLOCK2, LOW);
+    delayMicroseconds(1500);
+  }
+  delay(delay_time);
+}
 
 //make 2 boxes and display informations
 //display motors informations such as speed, direction
@@ -941,6 +953,7 @@ void AllTest() {
     unsigned long start = 0;
     //endTime = 0;
     while(keyIn != '#') {
+//      calibrate()
       start = micros();
       digitalWrite(sig, HIGH);
       for (; i <= stepsIndex; i++)
@@ -1013,6 +1026,7 @@ void motorTest() {
     unsigned long start = 0;
     //endTime = 0;
     while(keyIn != '#') {
+//      calibrate();
       start = micros();
       for (; i <= stepsIndex; i++)
       {
