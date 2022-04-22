@@ -287,7 +287,7 @@ void mainMenu() {
   tft.println("--Main Menu--");
   tft.setTextSize(1);
   tft.println(" ");
-  tft.setTextColor(ILI9341_GREEN);  tft.setTextSize(2.5);
+  tft.setTextColor(ILI9341_GREEN);  tft.setTextSize(2.85);
   tft.println(" A. User Mode");
   tft.println(" B. Developer Mode");
   tft.println(" C. Test Mode");
@@ -343,7 +343,7 @@ void userModeMenu() {
   tft.println("--User Mode--");
   tft.setTextSize(1);
   tft.println(" ");
-  tft.setTextColor(ILI9341_GREEN);  tft.setTextSize(2.75);
+  tft.setTextColor(ILI9341_GREEN);  tft.setTextSize(2.8);
   tft.println(" A. Operation");
   tft.println(" B. Configurations");
   tft.println(" #. Main Menu");
@@ -398,7 +398,7 @@ void operations(){
   tft.println(" ");
   tft.setTextColor(ILI9341_GREEN);
   tft.println("Press '1' to START");
-  tft.setTextColor(ILI9341_RED);
+  tft.setTextColor(ILI9341_RED);tft.setTextSize(2.3);
   tft.println("Press '#' to return to main menu");
 
   while (opKey == NULL) {
@@ -435,7 +435,7 @@ void configurations (){
 
   tft.fillScreen(ILI9341_NAVY);
   tft.setCursor(5,0);
-  tft.setTextColor(ILI9341_WHITE);  tft.setTextSize(3.50);
+  tft.setTextColor(ILI9341_WHITE);  tft.setTextSize(3.30);
   tft.println("--Configurations--");
   tft.setTextSize(1);
   tft.println(" ");
@@ -489,7 +489,7 @@ void configurations (){
   } 
   tft.fillScreen(ILI9341_NAVY);
   tft.setCursor(5,0);
-  tft.setTextColor(ILI9341_WHITE);  tft.setTextSize(3);
+  tft.setTextColor(ILI9341_WHITE);  tft.setTextSize(2.8);
   tft.println("Configuration set!");
   tft.setTextSize(0.6);
   tft.println(" ");
@@ -499,7 +499,7 @@ void configurations (){
   tft.print("Wood Type: "); tft.println(woodType);
   tft.println(" ");
   tft.println(" ");
-  tft.setTextColor(ILI9341_RED);
+  tft.setTextColor(ILI9341_RED);tft.setTextSize(2.25);
   tft.println("Press '#' to return to main menu");
 
   while (configKey != '#') {
@@ -517,7 +517,7 @@ void developerModeMenu() {
   
   tft.fillScreen(ILI9341_NAVY);
   tft.setCursor(5,0);
-  tft.setTextColor(ILI9341_WHITE);  tft.setTextSize(3);
+  tft.setTextColor(ILI9341_WHITE);  tft.setTextSize(2.75);
   tft.println("--Developer Mode--");
   tft.setTextSize(0.6);
   tft.println(" ");
@@ -757,8 +757,8 @@ void testModeLoop(char input) {
 void StepForward()
 {
   digitalWrite(DIR1, LOW);
-  for (int i = 0; i < 1; i++)
-  {
+//  for (int i = 0; i < 1; i++)
+//  {
     for (int x = 0; x < stepsPerRev / stepsIndex; x++)
     {
       digitalWrite(CLOCK1, HIGH);
@@ -768,7 +768,7 @@ void StepForward()
       stepCount+1;
     }
     delay(delay_time);
-  }
+//  }
 }
 
 //delay_time for stepper motor speed
@@ -801,6 +801,18 @@ void StepForward180()
   delay(delay_time);
 }
 
+void calibrate()
+{
+  digitalWrite(DIR2, LOW);
+  while(digitalRead(HALL_SENSOR) == HIGH)
+  {
+    digitalWrite(CLOCK2, HIGH);
+    delayMicroseconds(1500);
+    digitalWrite(CLOCK2, LOW);
+    delayMicroseconds(1500);
+  }
+  delay(delay_time);
+}
 
 //make 2 boxes and display informations
 //display motors informations such as speed, direction
@@ -941,6 +953,7 @@ void AllTest() {
     unsigned long start = 0;
     //endTime = 0;
     while(keyIn != '#') {
+//      calibrate()
       start = micros();
       digitalWrite(sig, HIGH);
       for (; i <= stepsIndex; i++)
@@ -1013,6 +1026,7 @@ void motorTest() {
     unsigned long start = 0;
     //endTime = 0;
     while(keyIn != '#') {
+//      calibrate();
       start = micros();
       for (; i <= stepsIndex; i++)
       {
