@@ -6,7 +6,7 @@
 //defining new colors
 #define ILI9341_GRAY 0xA510
 //
-#define HALL_SENSOR      35
+#define HALL_SENSOR      41
 
 //Stepper motors variables/setup
 int CLOCK1 = 11, DIR1 = 23, CLOCK2 = 12, DIR2 = 24;
@@ -29,6 +29,8 @@ float rpm = 180;
 
 float delay_time = 60L * 1000L * 1000L / stepsPerRev / rpm;
 
+int setPsi = 20;
+float lengthToRub = 13;
 float batLength = 24;
 float batCircum = 8.2;
 float woodType = 0;
@@ -361,10 +363,15 @@ void userModeLoop(char input) {
   if (input){
   switch (input) {
   case 'A': // Operation
-    operations();
+    changeValues(batLength, 5, 24, 34, "Set Bat Length");
+    lengthToRub = batLength - 20;
+    //operations();
+    AllTest();
+    userModeMenu();
     break;
   case 'B': // Configuration
     configurations();
+    userModeMenu();
     break;
    case '#': // return to main Menu
     mainMenu();
@@ -524,12 +531,9 @@ void developerModeMenu() {
   tft.setTextColor(ILI9341_GREEN);  tft.setTextSize(2.5);
   tft.println(" 0. Start");
   tft.println(" 1. Bat Length");
-  tft.println(" 2. Bat Circumference");
-  tft.println(" 3. Wood Type");
-  tft.println(" 4. Travel Speed");
-  tft.println(" 5. Rotation Angle");
-  tft.println(" 6. Poly Angle");
-  tft.println(" 7. Force");
+  tft.println(" 2. Speed");
+  tft.println(" 3. Rotation Angle");
+  tft.println(" 4. Poly Angle");
   tft.println(" #. Main Menu");
 
   while (developerModeKey == NULL)
@@ -551,42 +555,26 @@ void developerModeLoop(char input) {
     AllTest();
     break;
   case '1': // bat length
-    changeValues(batLength, 3, 24, 34, "Bat Length");
+    changeValues(batLength, 5, 24, 34, "Bat Length");
     developerModeMenu();
     break;
-  case '2': // bat circumference
-    changeValues(batCircum, 2, 4, 8.6, "Bat Circumference");
-    developerModeMenu();
-    break;
-  case '3': // wood type
-    //maybe #define type0 0, at the top
-    //type: 0, 1, 2
-    //int woodType = 0, 1, 2
-    changeValues(woodType, 2, 0, 2, "Wood Type");
-    developerModeMenu();
-    break;
-  case '4': // travel speed
+  case '2': // travel speed
     //function under test
     changeValues(rpm, 10, 10, 300, "RPM SPEED");
     delay_time = 60L * 1000L * 1000L / stepsPerRev / rpm;
     developerModeMenu();
     break;
-  case '5': // rotation angle
+  case '3': // rotation angle
     //add function to change rotation angle
     changeValues(angleIndex, 5, 1, 30, "rotation angle");
     stepsIndex = 360/angleIndex;
-    //delay_time = 60L * 1000L * 1000L / stepsPerRev / rpm;
     developerModeMenu();
     break;
-  case '6': // poly angle
+  case '4': // poly angle
     //add function to change poly angle
     changeValues(anglePoly, 2, 0.1, 4, "poly angle");
     stepsPoly = stepsPerRev/anglePoly;
-    //delay_time = 60L * 1000L * 1000L / stepsPerRev / rpm;
     developerModeMenu();
-    break;
-  case '7': // force
-    //add function to change force option
     break;
   case '#': // return to main Menu
     mainMenu();
@@ -686,8 +674,6 @@ void testModeMenu() {
   //No changes to any of these values in the TEST MODE
   //purpose of it just to check if all the components works
   batLength = 20;
-  batCircum = 4;
-  woodType = 0;
   rpm = 100;
   angleIndex = 15;
   anglePoly = 2;
@@ -701,7 +687,7 @@ void testModeMenu() {
   tft.fillScreen(ILI9341_NAVY);
   tft.setCursor(5,0);
   tft.setTextColor(ILI9341_WHITE);  tft.setTextSize(4);
-  tft.println("--Test Mode--");
+  tft.println("-Test Mode-");
   tft.setTextSize(1);
   tft.println(" ");
   tft.setTextColor(ILI9341_GREEN);  tft.setTextSize(3);
@@ -709,7 +695,7 @@ void testModeMenu() {
   tft.println(" B. Motor    Test");
   tft.println(" C. Solenoid Test");
   tft.println(" D. Keypad   Test");
-  tft.println(" 0. All      Test");
+  //tft.println(" 0. All      Test");
   tft.println(" #. Main Menu");
 
   while (testModeKey == NULL)
@@ -725,19 +711,25 @@ void testModeLoop(char input) {
   switch (input) {
   case 'A': // display test
     displayTest();
+    testModeMenu();
     break;
   case 'B': // motor test
     motorTest();
+    testModeMenu();
     break;
   case 'C': // solenoid test
     solenoidTest();
+    testModeMenu();
     break;
   case 'D': // keypad test
     keypadTest();
+    testModeMenu();
     break;
+    /*
   case '0': // ALL parts test
     AllTest(); 
     break;
+    */
   case '#': // return to main Menu
     mainMenu();
     break;
@@ -775,9 +767,10 @@ void StepForward()
 //solenoidMode '0' to disable or '1' to enable solenoid
 void StepForward180()
 {
+  calibrate();
   digitalWrite(DIR2, HIGH);
 
-  for (int x = 0; x < stepsPoly; x++)
+  for (int x = 0; x < (307.6923 * lengthToRub); x++)
   {
       digitalWrite(CLOCK2, HIGH);
       delayMicroseconds(delay_time);
@@ -796,7 +789,7 @@ void StepForward180()
     delayMicroseconds(delay_time);
     digitalWrite(CLOCK2, LOW);
     delayMicroseconds(delay_time);
-    cycleCount+1;
+    cycleCount+1; 
   }
   delay(delay_time);
 }
@@ -820,11 +813,8 @@ void calibrate()
 //maybe add a feature to only
 //update the needed box(both, box1, box2)
 void printInfo(float mValue, float mValue2, int mValue3, float mValue4, int motorEN, int motorEN2, int solenoidEN) {
-  //int motor = mValue, motor1 = mValue2, motor2 = mValue3;
-  
+  float timeCount = (endTime/1000000);
   //display motors and info
-  //tft.setCursor(10, 150);
-  //tft.fillRect(10,150, 140, 35, ILI9341_BLACK);
   tft.drawRect(10,130, 170, 85, ILI9341_RED);
   tft.drawRect(11,131, 168, 83, ILI9341_RED);
   tft.setCursor(14, 134);
@@ -837,18 +827,19 @@ void printInfo(float mValue, float mValue2, int mValue3, float mValue4, int moto
   tft.setCursor(14, 164); 
   tft.print("batLength      : "); tft.print(batLength);tft.println("  ");
   tft.setCursor(14, 174); 
-  tft.print("batCircum      : "); tft.print(batCircum);tft.println("  ");
+  tft.print("Set PSI To     : "); tft.print(setPsi);tft.println("  ");
   tft.setCursor(14, 184); 
-  tft.print("woodType       : "); tft.print(woodType);tft.println("  ");
-  tft.setCursor(14, 194); 
   tft.print("Cycle          : "); tft.print(mValue3);tft.println("  ");
+  tft.setCursor(14, 194); 
+  tft.print("Time           : "); tft.print(timeCount/60);tft.print("  ");
   tft.setCursor(14, 204); 
-  tft.print("Time           : "); tft.print(endTime/1000000);tft.print("  ");
+  tft.print("lengthToRub    : "); tft.print(lengthToRub);tft.print("  ");
 
 
   //endTime
   
   /* values might need to print 
+   *  lengthToRub
   batLength = 20;
   batCircum = 4;
   woodType = 0;
@@ -924,9 +915,9 @@ int menuPrompt() {
 //This function to test the solenoid
 void AllTest() {
   tft.fillScreen(ILI9341_BLACK);
-  tft.setCursor(10, 30);
+  tft.setCursor(1, 30);
   tft.setTextColor(ILI9341_BLUE);  tft.setTextSize(3);
-  tft.println("TEST ALL Parts");
+  tft.println("Bone Rubbing Process");
   tft.println(" ");
 
   cycleCount = 0;
@@ -953,7 +944,6 @@ void AllTest() {
     unsigned long start = 0;
     //endTime = 0;
     while(keyIn != '#') {
-//      calibrate()
       start = micros();
       digitalWrite(sig, HIGH);
       for (; i <= stepsIndex; i++)
@@ -966,8 +956,8 @@ void AllTest() {
         stepCount += 1;
         cycleCount += 1;
   
-        Serial.println(stepCount);
-        Serial.println(cycleCount);
+        //Serial.println(stepCount);
+        //Serial.println(cycleCount);
 
         if(i == stepsIndex) {
           endTime = micros() - start;
@@ -982,7 +972,7 @@ void AllTest() {
       digitalWrite(sig, LOW);
       //endTime = micros() - start;
 
-      Serial.println(endTime);
+      //Serial.println(endTime);
       
       delay(50);
       keyIn = customKeypad.getKey();
@@ -1026,9 +1016,9 @@ void motorTest() {
     unsigned long start = 0;
     //endTime = 0;
     while(keyIn != '#') {
-//      calibrate();
       start = micros();
-      for (; i <= stepsIndex; i++)
+      //2-5 just to make sure motors are working
+      for (; i <= 3; i++)
       {
         //tft.setTextSize(2); tft.setTextColor(ILI9341_RED, ILI9341_YELLOW); tft.print(setdir);
         printInfo(rpm, angleIndex, cycleCount, anglePoly, 1, 0, 0);
