@@ -32,8 +32,8 @@ float delay_time = 60L * 1000L * 1000L / stepsPerRev / rpm;
 int setPsi = 20;
 float lengthToRub = 13;
 float batLength = 24;
-float batCircum = 8.2;
-float woodType = 0;
+//float batCircum = 8.2;
+//float woodType = 0;
 
 //Solenoid setup
 int sig = 1;
@@ -363,10 +363,7 @@ void userModeLoop(char input) {
   if (input){
   switch (input) {
   case 'A': // Operation
-    changeValues(batLength, 5, 24, 34, "Set Bat Length");
-    lengthToRub = batLength - 20;
-    //operations();
-    AllTest();
+    operations();
     userModeMenu();
     break;
   case 'B': // Configuration
@@ -389,51 +386,9 @@ void userModeLoop(char input) {
 }
 
 void operations(){
-
-  char opKey = NULL;
-  tft.fillScreen(ILI9341_NAVY);
-  tft.setCursor(5,0);
-  tft.setTextColor(ILI9341_WHITE);  tft.setTextSize(3);
-  tft.println("Configurations:");
-  tft.setTextSize(0.6);
-  tft.println(" ");
-  tft.setTextColor(ILI9341_GREEN);  tft.setTextSize(2.5);
-  tft.print("Bat Length: "); tft.println(batLength);
-  tft.print("Bat Circumference: "); tft.println(batCircum);
-  tft.print("Wood Type: "); tft.println(woodType);
-  tft.println(" ");
-  tft.println(" ");
-  tft.setTextColor(ILI9341_GREEN);
-  tft.println("Press '1' to START");
-  tft.setTextColor(ILI9341_RED);tft.setTextSize(2.3);
-  tft.println("Press '#' to return to main menu");
-
-  while (opKey == NULL) {
-    opKey = customKeypad.getKey();
-  }
-
-  if(opKey){
-    switch(opKey){
-      case '1':
-      //StepForward(delay_time);
-      //StepForward180(delay_time);
-      StepForward180();
-      StepForward();
-      tft.fillScreen(ILI9341_NAVY);
-      tft.setCursor(5,0);
-      tft.setTextColor(ILI9341_WHITE);  tft.setTextSize(3);
-      tft.println("Configurations:");
-      tft.setTextSize(0.6);
-      tft.println(" ");
-      tft.setTextColor(ILI9341_GREEN);  tft.setTextSize(2.5);
-      tft.print("Bat Length: "); tft.println(batLength);
-      tft.print("Bat Circumference: "); tft.println(batCircum);
-      tft.print("Wood Type: "); tft.println(woodType);
-      break;
-      default:
-      break;
-    }
-  }
+    changeValues(batLength, 5, 24, 34, "Set Bat Length");
+    lengthToRub = batLength - 20;
+    AllTest();
 }
 
 void configurations (){
@@ -449,38 +404,50 @@ void configurations (){
   tft.setTextColor(ILI9341_GREEN);  tft.setTextSize(2.75);
   tft.println(" Select Configuration");
   tft.setTextSize(2);
-  tft.println(" (1) Bat 1");
-  tft.println(" (2) Bat 2");
-  tft.println(" (3) Bat 3");
-  tft.println(" (4) Bat 4");
+  tft.println(" (1) 24 inches");
+  tft.println(" (2) 28 inches");
+  tft.println(" (3) 30 inches");
+  tft.println(" (4) 34 inches");
   tft.println(" #. Main Menu");
 
   while (configKey == NULL) {
     configKey = customKeypad.getKey();
   }
 
-  //add rpm, angle of rotation, polyangle
+  //add rpm, angle of rotation, polyangle DONE -> can change to desired
   if (configKey){
   switch (configKey) {
   case '1': // bat 1
     batLength = 24;
-    batCircum = 8.2;
-    woodType = 0;
+    angleIndex = 5;
+    stepsIndex = 360/angleIndex;
+    anglePoly = 0.5;
+    stepsPoly = stepsPerRev/anglePoly;
+    rpm = 180;
     break;
   case '2': // bat 2
     batLength = 28;
-    batCircum = 7.2;
-    woodType = 1;
+    angleIndex = 5;
+    stepsIndex = 360/angleIndex;
+    anglePoly = 0.5;
+    stepsPoly = stepsPerRev/anglePoly;
+    rpm = 180;
     break;
   case '3': // bat 3
     batLength = 30;
-    batCircum = 6;
-    woodType = 1;
+    angleIndex = 5;
+    stepsIndex = 360/angleIndex;
+    anglePoly = 0.5;
+    stepsPoly = stepsPerRev/anglePoly;
+    rpm = 180;
     break;
   case '4': //bat 4
     batLength = 34;
-    batCircum = 5;
-    woodType = 2;
+    angleIndex = 5;
+    stepsIndex = 360/angleIndex;
+    anglePoly = 0.5;
+    stepsPoly = stepsPerRev/anglePoly;
+    rpm = 180;
     break;
   case '#': // return to main Menu
     mainMenu();
@@ -502,8 +469,6 @@ void configurations (){
   tft.println(" ");
   tft.setTextColor(ILI9341_GREEN);  tft.setTextSize(2.5);
   tft.print("Bat Length: "); tft.println(batLength);
-  tft.print("Bat Circumference: "); tft.println(batCircum);
-  tft.print("Wood Type: "); tft.println(woodType);
   tft.println(" ");
   tft.println(" ");
   tft.setTextColor(ILI9341_RED);tft.setTextSize(2.25);
@@ -1076,6 +1041,7 @@ void solenoidTest() {
     //this need to be looked at
     //sometimes it does NOT exit when # is pressed
     while(keyIn != '#') {
+      //put this in an if statement?
       printInfo(rpm, angleIndex, cycleCount, anglePoly, 0, 0, 1);
       digitalWrite(sig, HIGH);
       delay(500);
@@ -1083,7 +1049,7 @@ void solenoidTest() {
       delay(500);
       printInfo(rpm, angleIndex, cycleCount, anglePoly, 0, 0, 0);
     
-      keyIn = customKeypad.getKey();
+      keyIn = customKeypad.getKey(); // maybe put this first?
     }
   }
   printInfo(rpm, angleIndex, cycleCount, anglePoly, 0, 0, 0);
