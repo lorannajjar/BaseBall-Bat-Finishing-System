@@ -9,13 +9,13 @@ int stepCount = 0;
 int cycleCount = 0;
 int stepsPerRev = 2000;
 
-int angleIndex = 15;
-int stepsIndex = 360/angleIndex;
+float angleIndex = 5;
+float stepsIndex = 360/angleIndex;
 
-int anglePoly = 1;
-int stepsPoly = stepsPerRev/anglePoly;
+float anglePoly = 0.5;
+float stepsPoly = stepsPerRev/anglePoly;
 
-int rpm = 60;
+int rpm = 180;
 
 float delay_time = 60L * 1000L * 1000L / stepsPerRev / rpm;
 
@@ -84,7 +84,7 @@ void StepForward(float delay_time)
 
 void StepForward180(float delay_time)
 {
-  digitalWrite(DIR2, LOW);
+  digitalWrite(DIR2, HIGH);
   for (int i = 0; i < 1; i++)
   {
     for (int x = 0; x < stepsPoly; x++)
@@ -96,7 +96,7 @@ void StepForward180(float delay_time)
     }
     delay(delay_time);
   }
-  digitalWrite(DIR2, HIGH);
+  digitalWrite(DIR2, LOW);
   for (int i = 1; i < 2; i++)
   {
     for (int x = 0; x < stepsPoly; x++)
