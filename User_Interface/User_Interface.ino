@@ -22,16 +22,19 @@ int stepsPerRev = 2000;
 float angleIndex = 5;
 float stepsIndex = 360/angleIndex;
 
+
 float anglePoly = 0.5;
-float stepsPoly = stepsPerRev/anglePoly;
+//float stepsPoly = stepsPerRev/anglePoly;
+
 
 float rpm = 180;
 
 float delay_time = 60L * 1000L * 1000L / stepsPerRev / rpm;
 
-int setPsi = 20;
-float lengthToRub = 13;
+float setPsi = 20;
 float batLength = 24;
+float lengthToRub = batLength - 20;
+
 float batCircum = 8.2;
 float woodType = 0;
 
@@ -363,16 +366,18 @@ void userModeLoop(char input) {
   if (input){
   switch (input) {
   case 'A': // Operation
-    changeValues(batLength, 5, 24, 34, "Set Bat Length");
+    changeValues(batLength, 5, 24, 36, "Set Bat Length");
     lengthToRub = batLength - 20;
     //operations();
     AllTest();
     userModeMenu();
     break;
+
   case 'B': // Configuration
     configurations();
     userModeMenu();
     break;
+
    case '#': // return to main Menu
     mainMenu();
     break;
@@ -388,53 +393,6 @@ void userModeLoop(char input) {
   delay(10);
 }
 
-void operations(){
-
-  char opKey = NULL;
-  tft.fillScreen(ILI9341_NAVY);
-  tft.setCursor(5,0);
-  tft.setTextColor(ILI9341_WHITE);  tft.setTextSize(3);
-  tft.println("Configurations:");
-  tft.setTextSize(0.6);
-  tft.println(" ");
-  tft.setTextColor(ILI9341_GREEN);  tft.setTextSize(2.5);
-  tft.print("Bat Length: "); tft.println(batLength);
-  tft.print("Bat Circumference: "); tft.println(batCircum);
-  tft.print("Wood Type: "); tft.println(woodType);
-  tft.println(" ");
-  tft.println(" ");
-  tft.setTextColor(ILI9341_GREEN);
-  tft.println("Press '1' to START");
-  tft.setTextColor(ILI9341_RED);tft.setTextSize(2.3);
-  tft.println("Press '#' to return to main menu");
-
-  while (opKey == NULL) {
-    opKey = customKeypad.getKey();
-  }
-
-  if(opKey){
-    switch(opKey){
-      case '1':
-      //StepForward(delay_time);
-      //StepForward180(delay_time);
-      StepForward180();
-      StepForward();
-      tft.fillScreen(ILI9341_NAVY);
-      tft.setCursor(5,0);
-      tft.setTextColor(ILI9341_WHITE);  tft.setTextSize(3);
-      tft.println("Configurations:");
-      tft.setTextSize(0.6);
-      tft.println(" ");
-      tft.setTextColor(ILI9341_GREEN);  tft.setTextSize(2.5);
-      tft.print("Bat Length: "); tft.println(batLength);
-      tft.print("Bat Circumference: "); tft.println(batCircum);
-      tft.print("Wood Type: "); tft.println(woodType);
-      break;
-      default:
-      break;
-    }
-  }
-}
 
 void configurations (){
   char configKey = NULL;
@@ -443,17 +401,17 @@ void configurations (){
   tft.fillScreen(ILI9341_NAVY);
   tft.setCursor(5,0);
   tft.setTextColor(ILI9341_WHITE);  tft.setTextSize(3.30);
-  tft.println("--Configurations--");
+  tft.println("-Configurations-");
   tft.setTextSize(1);
   tft.println(" ");
   tft.setTextColor(ILI9341_GREEN);  tft.setTextSize(2.75);
   tft.println(" Select Configuration");
   tft.setTextSize(2);
-  tft.println(" (1) Bat 1");
-  tft.println(" (2) Bat 2");
-  tft.println(" (3) Bat 3");
-  tft.println(" (4) Bat 4");
-  tft.println(" #. Main Menu");
+  tft.println(" (1) 180 RPM");
+  tft.println(" (2) 150 RPM");
+  tft.println(" (3) 120 RPM");
+  tft.println(" (4) 100 RPM");
+  tft.println(" #. User mode Menu");
 
   while (configKey == NULL) {
     configKey = customKeypad.getKey();
@@ -463,24 +421,20 @@ void configurations (){
   if (configKey){
   switch (configKey) {
   case '1': // bat 1
-    batLength = 24;
-    batCircum = 8.2;
-    woodType = 0;
+    rpm = 180;
+    delay_time = 60L * 1000L * 1000L / stepsPerRev / rpm;
     break;
   case '2': // bat 2
-    batLength = 28;
-    batCircum = 7.2;
-    woodType = 1;
+    rpm = 150;
+    delay_time = 60L * 1000L * 1000L / stepsPerRev / rpm;
     break;
   case '3': // bat 3
-    batLength = 30;
-    batCircum = 6;
-    woodType = 1;
+    rpm = 120;
+    delay_time = 60L * 1000L * 1000L / stepsPerRev / rpm;
     break;
   case '4': //bat 4
-    batLength = 34;
-    batCircum = 5;
-    woodType = 2;
+    rpm = 100;
+    delay_time = 60L * 1000L * 1000L / stepsPerRev / rpm;
     break;
   case '#': // return to main Menu
     mainMenu();
@@ -501,18 +455,18 @@ void configurations (){
   tft.setTextSize(0.6);
   tft.println(" ");
   tft.setTextColor(ILI9341_GREEN);  tft.setTextSize(2.5);
-  tft.print("Bat Length: "); tft.println(batLength);
-  tft.print("Bat Circumference: "); tft.println(batCircum);
-  tft.print("Wood Type: "); tft.println(woodType);
+  ///tft.print("Speed is set !! "); tft.println(batLength);
+  tft.print("Travel Speed: "); tft.println(rpm);
+  //tft.print("Rotational Angle: "); tft.println(angleIndex);
   tft.println(" ");
   tft.println(" ");
   tft.setTextColor(ILI9341_RED);tft.setTextSize(2.25);
-  tft.println("Press '#' to return to main menu");
+  tft.println("Press '#' to return to user mode menu");
 
   while (configKey != '#') {
     configKey = customKeypad.getKey();
   }
-  mainMenu();
+  //mainMenu();
 
   
 }
@@ -525,7 +479,7 @@ void developerModeMenu() {
   tft.fillScreen(ILI9341_NAVY);
   tft.setCursor(5,0);
   tft.setTextColor(ILI9341_WHITE);  tft.setTextSize(2.75);
-  tft.println("--Developer Mode--");
+  tft.println("-Developer Mode-");
   tft.setTextSize(0.6);
   tft.println(" ");
   tft.setTextColor(ILI9341_GREEN);  tft.setTextSize(2.5);
@@ -533,7 +487,7 @@ void developerModeMenu() {
   tft.println(" 1. Bat Length");
   tft.println(" 2. Speed");
   tft.println(" 3. Rotation Angle");
-  tft.println(" 4. Poly Angle");
+  tft.println(" 4. Set pressure/PSI");
   tft.println(" #. Main Menu");
 
   while (developerModeKey == NULL)
@@ -553,9 +507,11 @@ void developerModeLoop(char input) {
   switch (input) {
   case '0': // bat length
     AllTest();
+    developerModeMenu();
     break;
   case '1': // bat length
-    changeValues(batLength, 5, 24, 34, "Bat Length");
+    changeValues(batLength, 5, 24, 36, "Bat Length");
+    lengthToRub = batLength - 20;
     developerModeMenu();
     break;
   case '2': // travel speed
@@ -570,10 +526,17 @@ void developerModeLoop(char input) {
     stepsIndex = 360/angleIndex;
     developerModeMenu();
     break;
+    /*
   case '4': // poly angle
     //add function to change poly angle
     changeValues(anglePoly, 2, 0.1, 4, "poly angle");
     stepsPoly = stepsPerRev/anglePoly;
+    developerModeMenu();
+    break;
+    */
+  case '4': // Change PSI/pressure
+    //add function to change poly angle
+    changeValues(setPsi, 10, 1, 40, "Pressure PSI");
     developerModeMenu();
     break;
   case '#': // return to main Menu
@@ -673,15 +636,16 @@ void testModeMenu() {
   //define default values here
   //No changes to any of these values in the TEST MODE
   //purpose of it just to check if all the components works
-  batLength = 20;
+  batLength = 24;
+  lengthToRub = batLength - 20;
   rpm = 100;
   angleIndex = 15;
-  anglePoly = 2;
+  //anglePoly = 2;
 
   //calculate with these default values
   delay_time = 60L * 1000L * 1000L / stepsPerRev / rpm;
   stepsIndex = 360/angleIndex;
-  stepsPoly = stepsPerRev/anglePoly;
+  //stepsPoly = stepsPerRev/anglePoly;
   
   char testModeKey = NULL;
   tft.fillScreen(ILI9341_NAVY);
@@ -749,25 +713,22 @@ void testModeLoop(char input) {
 void StepForward()
 {
   digitalWrite(DIR1, LOW);
-//  for (int i = 0; i < 1; i++)
-//  {
-    for (int x = 0; x < stepsPerRev / stepsIndex; x++)
-    {
-      digitalWrite(CLOCK1, HIGH);
-      delayMicroseconds(delay_time);
-      digitalWrite(CLOCK1, LOW);
-      delayMicroseconds(delay_time);
-      stepCount+1;
-    }
-    delay(delay_time);
-//  }
+  
+  for (int x = 0; x < stepsPerRev / stepsIndex; x++)
+  {
+    digitalWrite(CLOCK1, HIGH);
+    delayMicroseconds(delay_time);
+    digitalWrite(CLOCK1, LOW);
+    delayMicroseconds(delay_time);
+    stepCount+1;
+  }
+  delay(delay_time);
 }
 
 //delay_time for stepper motor speed
 //solenoidMode '0' to disable or '1' to enable solenoid
 void StepForward180()
 {
-  calibrate();
   digitalWrite(DIR2, HIGH);
 
   for (int x = 0; x < (307.6923 * lengthToRub); x++)
@@ -783,8 +744,6 @@ void StepForward180()
 
   while(digitalRead(HALL_SENSOR) == HIGH)
   {
-//  for (int x = 0; x < stepsPoly; x++)
-//  {
     digitalWrite(CLOCK2, HIGH);
     delayMicroseconds(delay_time);
     digitalWrite(CLOCK2, LOW);
@@ -814,6 +773,7 @@ void calibrate()
 //update the needed box(both, box1, box2)
 void printInfo(float mValue, float mValue2, int mValue3, float mValue4, int motorEN, int motorEN2, int solenoidEN) {
   float timeCount = (endTime/1000000);
+  
   //display motors and info
   tft.drawRect(10,130, 170, 85, ILI9341_RED);
   tft.drawRect(11,131, 168, 83, ILI9341_RED);
@@ -822,32 +782,18 @@ void printInfo(float mValue, float mValue2, int mValue3, float mValue4, int moto
   tft.print("Motor RPM      : "); tft.print(mValue);tft.println("  ");
   tft.setCursor(14, 144); 
   tft.print("Rotation Angle : "); tft.print(mValue2);tft.println("  ");
+  //tft.setCursor(14, 154); 
+  //tft.print("Poly Angle     : "); tft.print(mValue4);tft.println("  ");
   tft.setCursor(14, 154); 
-  tft.print("Poly Angle     : "); tft.print(mValue4);tft.println("  ");
-  tft.setCursor(14, 164); 
   tft.print("batLength      : "); tft.print(batLength);tft.println("  ");
-  tft.setCursor(14, 174); 
+  tft.setCursor(14, 164); 
   tft.print("Set PSI To     : "); tft.print(setPsi);tft.println("  ");
-  tft.setCursor(14, 184); 
+  tft.setCursor(14, 174); 
   tft.print("Cycle          : "); tft.print(mValue3);tft.println("  ");
-  tft.setCursor(14, 194); 
+  tft.setCursor(14, 184); 
   tft.print("Time           : "); tft.print(timeCount/60);tft.print("  ");
-  tft.setCursor(14, 204); 
+  tft.setCursor(14, 194); 
   tft.print("lengthToRub    : "); tft.print(lengthToRub);tft.print("  ");
-
-
-  //endTime
-  
-  /* values might need to print 
-   *  lengthToRub
-  batLength = 20;
-  batCircum = 4;
-  woodType = 0;
-  rpm = 100;
-  angleIndex = 15;
-  anglePoly = 2;
-  */
-
   
   //display motor on/off - solenoid on/off
   //tft.fillRect(155,150, 140, 35, ILI9341_BLACK);
@@ -917,11 +863,12 @@ void AllTest() {
   tft.fillScreen(ILI9341_BLACK);
   tft.setCursor(1, 30);
   tft.setTextColor(ILI9341_BLUE);  tft.setTextSize(3);
-  tft.println("Bone Rubbing Process");
+  tft.println("Rubbing Process");
   tft.println(" ");
 
   cycleCount = 0;
   endTime = 0;
+  char keyIn = 's';
   printInfo(rpm, angleIndex, cycleCount, anglePoly, 0, 0, 0);
 
   int opt = menuPrompt();
@@ -930,11 +877,11 @@ void AllTest() {
     tft.fillScreen(ILI9341_BLACK);
     tft.setCursor(10, 30);
     tft.setTextColor(ILI9341_BLUE);  tft.setTextSize(3);
-    tft.println("TEST ALL Parts");
+    tft.println("Rubbing Process");
     tft.println(" ");
     tft.setTextColor(ILI9341_RED);  tft.setTextSize(2);
-    tft.println("Press/hold # to EXIT");
-    char keyIn = 's';
+    //tft.println("Press/hold # to EXIT");
+    //char keyIn = 's';
     //press/hold # to EXIT
     //this need to be looked at
     //sometimes it does NOT exit when # is pressed
@@ -942,11 +889,13 @@ void AllTest() {
     printInfo(rpm, angleIndex, cycleCount, anglePoly, 0, 0, 1);
     int i = 1;
     unsigned long start = 0;
-    //endTime = 0;
-    while(keyIn != '#') {
+
       start = micros();
+      calibrate();
       digitalWrite(sig, HIGH);
-      for (; i <= stepsIndex; i++)
+      //for (; i <= stepsIndex; i++)
+      //keyIn = NULL;
+      while(i <= stepsIndex)
       {
         printInfo(rpm, angleIndex, cycleCount, anglePoly, 1, 0, 1);
         StepForward180();
@@ -955,32 +904,24 @@ void AllTest() {
       
         stepCount += 1;
         cycleCount += 1;
-  
-        //Serial.println(stepCount);
-        //Serial.println(cycleCount);
 
         if(i == stepsIndex) {
           endTime = micros() - start;
         }
         
-        delay(50);
-        keyIn = customKeypad.getKey();
-        if(keyIn == '#') {
-          break;
-        }
+        i++;
       }
       digitalWrite(sig, LOW);
-      //endTime = micros() - start;
-
-      //Serial.println(endTime);
-      
-      delay(50);
-      keyIn = customKeypad.getKey();
       printInfo(rpm, angleIndex, cycleCount, anglePoly, 0, 0, 0);
+
+      keyIn = '7';
+      while(keyIn != '#') {
+        keyIn = customKeypad.getKey();
+      }
     }
-  }
+    
   delay(500);
-  mainMenu();
+  //mainMenu();
 }
 
 
@@ -994,6 +935,7 @@ void motorTest() {
 
   cycleCount = 0;
   endTime = 0;
+  char keyIn = 's';
   printInfo(rpm, angleIndex, cycleCount, anglePoly, 0, 0, 0);
   
   int opt = menuPrompt();
@@ -1005,19 +947,18 @@ void motorTest() {
     tft.println("Test Motor");
     tft.println(" ");
     tft.setTextColor(ILI9341_RED);  tft.setTextSize(2);
-    tft.println("Press/hold # to EXIT");
+    //tft.println("Press/hold # to EXIT");
 
-    char keyIn = 's';
+    //char keyIn = 's';
     //press/hold # to EXIT
     //this need to be looked at
     //sometimes it does NOT exit when # is pressed
     cycleCount = 0;
     int i = 1;
     unsigned long start = 0;
-    //endTime = 0;
-    while(keyIn != '#') {
       start = micros();
       //2-5 just to make sure motors are working
+      calibrate();
       for (; i <= 3; i++)
       {
         //tft.setTextSize(2); tft.setTextColor(ILI9341_RED, ILI9341_YELLOW); tft.print(setdir);
@@ -1028,26 +969,18 @@ void motorTest() {
       
         stepCount += 1;
         cycleCount += 1;
-  
-        //Serial.println(stepCount);
-        //Serial.println(cycleCount);
-      
-        keyIn = customKeypad.getKey();
-        //delay(50);
-        //if(keyIn == '#') {
-        //  break;
-        //}
       }
-      endTime = micros() - start;
-
-      //Serial.println(endTime);
-
-      keyIn = customKeypad.getKey();
+      endTime = micros() - start;   
       printInfo(rpm, angleIndex, cycleCount, anglePoly, 0, 0, 0);
+      
+      keyIn = '7';
+      while(keyIn != '#') {
+        keyIn = customKeypad.getKey();
+      }
     }
-  }
+    
   delay(500);
-  mainMenu();
+  //mainMenu();
 }
 
 //This function to test the solenoid
@@ -1069,13 +1002,15 @@ void solenoidTest() {
     tft.print("Test Solenoid");
     tft.println(" ");
     tft.setTextColor(ILI9341_RED);  tft.setTextSize(2);
-    tft.println("Press/hold # to EXIT");
+    tft.println(" ");
+    //tft.println("Press/hold # to EXIT");
 
     char keyIn = 's';
     //press/hold # to EXIT
     //this need to be looked at
     //sometimes it does NOT exit when # is pressed
-    while(keyIn != '#') {
+    int j;
+    for(j = 0; j < 3; j++) {
       printInfo(rpm, angleIndex, cycleCount, anglePoly, 0, 0, 1);
       digitalWrite(sig, HIGH);
       delay(500);
@@ -1083,12 +1018,12 @@ void solenoidTest() {
       delay(500);
       printInfo(rpm, angleIndex, cycleCount, anglePoly, 0, 0, 0);
     
-      keyIn = customKeypad.getKey();
+      //keyIn = customKeypad.getKey();
     }
   }
   printInfo(rpm, angleIndex, cycleCount, anglePoly, 0, 0, 0);
   delay(500);
-  mainMenu();
+  //mainMenu();
 }
 
 //This function to test keypad and print the key pressed on the display
@@ -1116,16 +1051,16 @@ void keypadTest() {
     }
   }
   delay(500);
-  mainMenu();
+  //mainMenu();
 }
 
 //test display with different graphical test
 void displayTest() {
   delay(10);
   testFillScreen();
-  delay(3000);
+  delay(2000);
 
-  mainMenu();
+  //mainMenu();
 }
 
 unsigned long testFillScreen() {
