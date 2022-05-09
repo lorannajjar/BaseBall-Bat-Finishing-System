@@ -366,7 +366,7 @@ void userModeLoop(char input) {
   if (input){
   switch (input) {
   case 'A': // Operation
-    changeValues(batLength, 5, 24, 36, "Set Bat Length");
+    changeValues(batLength, 5, 24, 40, "Set Bat Length");
     lengthToRub = batLength - 20;
     //operations();
     AllTest();
@@ -510,7 +510,7 @@ void developerModeLoop(char input) {
     developerModeMenu();
     break;
   case '1': // bat length
-    changeValues(batLength, 5, 24, 36, "Bat Length");
+    changeValues(batLength, 5, 24, 40, "Bat Length");
     lengthToRub = batLength - 20;
     developerModeMenu();
     break;
